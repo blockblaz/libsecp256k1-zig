@@ -1,14 +1,9 @@
 //! Provides a signing function that allows recovering the public key from the
 //! signature.
 //!
-const secp256k1 = @cImport({
-    @cInclude("secp256k1.h");
-    @cInclude("secp256k1_recovery.h");
-    @cInclude("secp256k1_preallocated.h");
-    @cInclude("secp256k1_schnorrsig.h");
-});
 const std = @import("std");
 const secp = @import("../secp256k1.zig");
+const secp256k1 = secp.secp256k1;
 const constants = @import("../constants.zig");
 
 const Error = secp.Error;

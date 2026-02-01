@@ -48,7 +48,7 @@ pub const schnorr = struct {
     pub const Signature = schnorr_lib.Signature;
 };
 
-const secp256k1 = @cImport({
+pub const secp256k1 = @cImport({
     @cInclude("secp256k1.h");
     @cInclude("secp256k1_recovery.h");
     @cInclude("secp256k1_preallocated.h");
@@ -181,9 +181,22 @@ pub const Secp256k1 = struct {
         secp256k1.secp256k1_context_destroy(self.ctx);
     }
 
-    pub usingnamespace ecdsa_lib.Secp;
-    pub usingnamespace schnorr_lib.Secp;
-    pub usingnamespace recovery_lib.Secp;
+    // Re-exported from ecdsa_lib.Secp
+    pub const signEcdsa = ecdsa_lib.Secp.signEcdsa;
+    pub const signEcdsaWithNoncedata = ecdsa_lib.Secp.signEcdsaWithNoncedata;
+    pub const signEcdsaGrindR = ecdsa_lib.Secp.signEcdsaGrindR;
+    pub const signEcdsaLowR = ecdsa_lib.Secp.signEcdsaLowR;
+    pub const verifyEcdsa = ecdsa_lib.Secp.verifyEcdsa;
+
+    // Re-exported from schnorr_lib.Secp
+    pub const signSchnorrWithAuxRand = schnorr_lib.Secp.signSchnorrWithAuxRand;
+    pub const verifySchnorr = schnorr_lib.Secp.verifySchnorr;
+    pub const signSchnorrHelper = schnorr_lib.Secp.signSchnorrHelper;
+
+    // Re-exported from recovery_lib.Secp
+    pub const signEcdsaRecoverable = recovery_lib.Secp.signEcdsaRecoverable;
+    pub const signEcdsaRecoverableWithNoncedata = recovery_lib.Secp.signEcdsaRecoverableWithNoncedata;
+    pub const recoverEcdsa = recovery_lib.Secp.recoverEcdsa;
 
     /// Creating new [`Secp256k1`] object, after all u need to call DEINIT
     pub fn genNew() @This() {

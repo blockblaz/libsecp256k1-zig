@@ -2,19 +2,15 @@ const std = @import("std");
 const constants = @import("constants.zig");
 const crypto = std.crypto;
 
-const secp256k1 = @cImport({
-    @cInclude("secp256k1.h");
-    @cInclude("secp256k1_recovery.h");
-    @cInclude("secp256k1_preallocated.h");
-    @cInclude("secp256k1_schnorrsig.h");
-});
+const secp_mod = @import("secp256k1.zig");
+const secp256k1 = secp_mod.secp256k1;
 
-const Error = @import("secp256k1.zig").Error;
-const ErrorParseHex = @import("secp256k1.zig").ErrorParseHex;
-const Secp256k1 = @import("secp256k1.zig").Secp256k1;
-const KeyPair = @import("secp256k1.zig").KeyPair;
-const SecretKey = @import("secp256k1.zig").SecretKey;
-const XOnlyPublicKey = @import("secp256k1.zig").XOnlyPublicKey;
+const Error = secp_mod.Error;
+const ErrorParseHex = secp_mod.ErrorParseHex;
+const Secp256k1 = secp_mod.Secp256k1;
+const KeyPair = secp_mod.KeyPair;
+const SecretKey = secp_mod.SecretKey;
+const XOnlyPublicKey = secp_mod.XOnlyPublicKey;
 
 pub const Signature = struct {
     inner: [constants.schnorr_signature_size]u8,

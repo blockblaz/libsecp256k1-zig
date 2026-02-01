@@ -1,11 +1,6 @@
 const std = @import("std");
-const secp256k1 = @cImport({
-    @cInclude("secp256k1.h");
-    @cInclude("secp256k1_recovery.h");
-    @cInclude("secp256k1_preallocated.h");
-    @cInclude("secp256k1_schnorrsig.h");
-});
 const secp = @import("../secp256k1.zig");
+const secp256k1 = secp.secp256k1;
 
 const serialized_signature = @import("serialized_signature.zig");
 pub const SerializedSignature = @import("serialized_signature.zig").SerializedSignature;
