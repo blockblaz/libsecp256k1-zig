@@ -6,6 +6,26 @@ const schnorr_lib = @import("schnorr.zig");
 
 pub const constants = @import("constants.zig");
 
+pub fn secureRandomBytes(buf: []u8) void {
+    const posix = std.posix;
+    const fd = posix.openatZ(std.c.AT.FDCWD, "/dev/urandom", .{ .ACCMODE = .RDONLY }, 0) catch |e|
+        std.debug.panic("cannot open /dev/urandom: {s}", .{@errorName(e)});
+    defer _ = std.c.close(fd);
+    var off: usize = 0;
+    while (off < buf.len) {
+        const n = posix.read(fd, buf[off..]) catch |e|
+            std.debug.panic("cannot read /dev/urandom: {s}", .{@errorName(e)});
+        if (n == 0) std.debug.panic("unexpected EOF on /dev/urandom", .{});
+        off += n;
+    }
+}
+
+pub fn defaultCsprng() std.Random.DefaultCsprng {
+    var seed: [std.Random.DefaultCsprng.secret_seed_length]u8 = undefined;
+    secureRandomBytes(&seed);
+    return std.Random.DefaultCsprng.init(seed);
+}
+
 /// The main error type for this library.
 pub const Error = error{
     /// Signature failed verification.
@@ -205,7 +225,7 @@ pub const Secp256k1 = struct {
 
         // Create 32 byte random seed.
         var seed: [32]u8 = undefined;
-        crypto.random.bytes(&seed);
+        secureRandomBytes(&seed);
 
         const res = secp256k1.secp256k1_context_randomize(ctx, &seed);
         std.debug.assert(res == 1);
@@ -441,7 +461,7 @@ pub const SecretKey = struct {
         defer secp.deinit();
 
         var aux: [32]u8 = undefined;
-        std.crypto.random.bytes(&aux);
+        secureRandomBytes(&aux);
 
         return secp.signSchnorrHelper(&hash, try KeyPair.fromSecretKey(&secp, self), &aux);
     }
@@ -458,7 +478,8 @@ pub const SecretKey = struct {
 
     /// Generate random [`SecretKey`] with default random
     pub fn generate() SecretKey {
-        return generateWithRandom(std.crypto.random);
+        var csprng = defaultCsprng();
+        return generateWithRandom(csprng.random());
     }
 
     pub fn fromString(data: []const u8) (Error || ErrorParseHex)!@This() {

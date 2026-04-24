@@ -2,11 +2,13 @@ const std = @import("std");
 const secp256k1 = @import("./secp256k1.zig");
 
 const Sha256 = std.crypto.hash.sha2.Sha256;
-const rand = std.crypto.random;
 
 test "generateKeypair" {
     const secp = secp256k1.Secp256k1.genNew();
     defer secp.deinit();
+
+    var csprng = secp256k1.defaultCsprng();
+    const rand = csprng.random();
 
     // First option:
     {
@@ -25,7 +27,8 @@ test "signAndVerifyEcdsa" {
     const secp = secp256k1.Secp256k1.genNew();
     defer secp.deinit();
 
-    const seckey = secp256k1.SecretKey.generateWithRandom(rand);
+    var csprng = secp256k1.defaultCsprng();
+    const seckey = secp256k1.SecretKey.generateWithRandom(csprng.random());
     const pubkey = secp256k1.PublicKey.fromSecretKey(secp, seckey);
 
     var buf: [32]u8 = undefined;

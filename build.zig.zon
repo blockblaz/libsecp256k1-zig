@@ -9,11 +9,11 @@
     .name = .secp256k1,
     .fingerprint = 0xed75d6d9e762dcbe,
     .version = "0.0.3",
-    .minimum_zig_version = "0.15.2",
+    .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .libsecp256k1 = .{
-            .url = "https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.5.1.tar.gz",
-            .hash = "1220bb683a6df744e618f58a008eaae3eb62b70a78334cec676bd82b1b9e8e944eeb",
+            .url = "https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.7.1.tar.gz",
+            .hash = "N-V-__8AAO1SWwCbwhTAU7t6L3XQtTy6TzE8CiOGHjENn_rl",
         },
     },
     .paths = .{
