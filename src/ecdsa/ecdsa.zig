@@ -218,12 +218,12 @@ pub const Secp = struct {
     ) Signature {
         const Type =
             struct {
-            var _bytes_to_grind: usize = 0;
+                var _bytes_to_grind: usize = 0;
 
-            fn check(s: secp256k1.secp256k1_ecdsa_signature) bool {
-                return derLengthCheck(s, 71 - @This()._bytes_to_grind);
-            }
-        };
+                fn check(s: secp256k1.secp256k1_ecdsa_signature) bool {
+                    return derLengthCheck(s, 71 - @This()._bytes_to_grind);
+                }
+            };
 
         Type._bytes_to_grind = bytes_to_grind;
 
