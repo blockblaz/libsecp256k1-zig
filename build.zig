@@ -11,11 +11,11 @@ fn buildSecp256k1(libsecp_c: *std.Build.Dependency, b: *std.Build, target: std.B
         }),
     });
 
-    lib.addIncludePath(libsecp_c.path(""));
-    lib.addIncludePath(libsecp_c.path("src"));
-    lib.addIncludePath(libsecp_c.path("include"));
+    lib.root_module.addIncludePath(libsecp_c.path(""));
+    lib.root_module.addIncludePath(libsecp_c.path("src"));
+    lib.root_module.addIncludePath(libsecp_c.path("include"));
 
-    lib.addCSourceFiles(.{
+    lib.root_module.addCSourceFiles(.{
         .root = libsecp_c.path(""),
         .flags = &.{
             "-DENABLE_MODULE_RECOVERY=1",
@@ -38,7 +38,7 @@ fn buildSecp256k1(libsecp_c: *std.Build.Dependency, b: *std.Build, target: std.B
 
     lib.installHeadersDirectory(libsecp_c.path("src"), "", .{ .include_extensions = &.{".h"} });
     lib.installHeadersDirectory(libsecp_c.path("include/"), "", .{ .include_extensions = &.{".h"} });
-    lib.linkLibC();
+    lib.root_module.link_libc = true;
 
     return lib;
 }
@@ -82,7 +82,7 @@ pub fn build(b: *std.Build) !void {
             .target = target,
         }),
     });
-    lib_unit_tests.linkLibrary(libsecp256k1);
+    lib_unit_tests.root_module.linkLibrary(libsecp256k1);
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
 
     const example_tests = b.addTest(.{
@@ -91,7 +91,7 @@ pub fn build(b: *std.Build) !void {
             .target = target,
         }),
     });
-    example_tests.linkLibrary(libsecp256k1);
+    example_tests.root_module.linkLibrary(libsecp256k1);
     const run_example_test = b.addRunArtifact(example_tests);
 
     // Similar to creating the run step earlier, this exposes a `test` step to

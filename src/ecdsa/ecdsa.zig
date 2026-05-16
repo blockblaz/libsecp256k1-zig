@@ -218,12 +218,12 @@ pub const Secp = struct {
     ) Signature {
         const Type =
             struct {
-            var _bytes_to_grind: usize = 0;
+                var _bytes_to_grind: usize = 0;
 
-            fn check(s: secp256k1.secp256k1_ecdsa_signature) bool {
-                return derLengthCheck(s, 71 - @This()._bytes_to_grind);
-            }
-        };
+                fn check(s: secp256k1.secp256k1_ecdsa_signature) bool {
+                    return derLengthCheck(s, 71 - @This()._bytes_to_grind);
+                }
+            };
 
         Type._bytes_to_grind = bytes_to_grind;
 
@@ -307,7 +307,7 @@ test "test sign ecdsa with nonce data" {
     // Generate a random private key (this would normally come from a wallet or similar)
     var private_key_data: [32]u8 = undefined;
 
-    std.crypto.random.bytes(&private_key_data);
+    secp.secureRandomBytes(&private_key_data);
 
     const sk = try secp.SecretKey.fromSlice(&private_key_data);
 
@@ -320,7 +320,7 @@ test "test sign ecdsa with nonce data" {
     // Generate a nonce manually for this test
     var nonce_data: [32]u8 = undefined;
 
-    std.crypto.random.bytes(&nonce_data);
+    secp.secureRandomBytes(&nonce_data);
 
     // Sign the message using the private key and nonce
     const signature = s.signEcdsaWithNoncedata(&message, &sk, nonce_data);
